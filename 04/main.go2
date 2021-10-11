@@ -1,0 +1,36 @@
+// vim:set filetype=go:
+package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+//docker run --rm -v "${PWD}":/tmp local/golang2:latest /usr/local/go/bin/go tool go2go run /tmp/main.go2
+
+// interface constraints
+
+type Stringer interface {
+    String() string
+}
+
+// can be done via interfaces!
+func sprint[T Stringer](value T) string {
+    return value.String()
+}
+
+// can't be done via interfaces!
+func sprintx[T Stringer](args []T) []string {
+    ret := make([]string, len(args))
+    for idx, arg := range args {
+        ret[idx] = arg.String()
+    }
+    return ret
+}
+
+func main() {
+    var b strings.Builder
+    b.WriteString("hello, stringer!")
+    fmt.Printf("sprintf=%s\n", sprint(&b))
+    fmt.Printf("sprintf=%+v\n", sprintx([]*strings.Builder{&b}))
+}
